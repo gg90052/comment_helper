@@ -6,7 +6,9 @@
     "dev": "vite --mode dev",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.16.7",
@@ -18,6 +20,7 @@
     "daisyui": "^2.18.1",
     "dayjs": "^1.11.3",
     "exceljs": "^4.3.0",
+    "gh-pages": "^5.0.0",
     "lint-staged": "^12.4.1",
     "lodash": "^4.17.21",
     "peerjs": "^1.4.6",
