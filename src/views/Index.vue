@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-screen-xl my-0 mx-auto">
+  <div class="w-full max-w-[1280px] my-0 mx-auto">
     <HeaderComponent @pageChange="pageChange" />
     <template v-if="pageStatus === 'home'">
       <MainArea />

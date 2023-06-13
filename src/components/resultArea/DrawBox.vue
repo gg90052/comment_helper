@@ -1,6 +1,7 @@
 <template>
   <div class="filterBox bg-white border p-4 mb-2">
-    <div class="grid grid-cols-[300px_1fr_300px]">
+    <p class="text-blue-700 text-3xl w-full text-center">抽獎區塊</p>
+    <div class="grid grid-cols-[300px_1fr_300px] mobile:grid-cols-1">
       <div class="text-left">
         <div class="form-control">
           <label class="label justify-start cursor-pointer">
@@ -10,11 +11,11 @@
         </div>
       </div>
       <div>
-        <p class="text-blue-700 text-3xl w-full text-center">抽獎區塊</p>
+        
       </div>
       <div class="">
         <div class="form-control flex-row">
-          <label class="input-group input-sm px-0 w-auto" :class="dataStore.showPrize === false ? '':'invisible'">
+          <label class="input-group input-sm px-0 w-auto" :class="dataStore.showPrize === false ? '':'hidden'">
             <span class="whitespace-nowrap !rounded-none">幫我抽出</span>
             <input type="text" class="input input-sm input-bordered w-[100px] focus:outline-none" v-model="state.drawCount" />
             <span class="!rounded-none">人</span>

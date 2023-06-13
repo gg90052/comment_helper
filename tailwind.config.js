@@ -11,6 +11,9 @@ module.exports = {
         chLightblue: '#44b1da',
       },
     },
+    screens: {
+      'mobile': {'max': '1279px'},
+    },
   },
   daisyui: {
     themes: [

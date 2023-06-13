@@ -27,9 +27,11 @@ const props = defineProps({
   top: 50%;
   left: 50%;
   transform: translate(-50%, -80%);
-  width: 540px;
+  width: 95%;
+  max-width: 540px;
   height: 350px;
-  background: url('@/assets/progress.jpg') center center no-repeat
+  background: url('@/assets/progress.jpg') center center no-repeat;
+  background-size: contain;
 }
 
 

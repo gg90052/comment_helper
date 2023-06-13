@@ -1,6 +1,7 @@
 <template>
   <div class="filterBox bg-white border p-4 mb-2">
-    <div class="grid grid-cols-[300px_1fr_300px]">
+    <p class="text-blue-700 text-3xl w-full text-center">篩選區塊</p>
+    <div class="grid grid-cols-[300px_1fr_300px] mobile:grid-cols-1">
       <div class="w-full flex justify-start items-center" :class="dataStore.command === 'reactions' ? '':'hidden'">
         <p>篩選心情：</p>
         <select @change="filterAll" class="select select-bordered select-sm w-8/12" v-model="filterState.reaction">
@@ -34,11 +35,10 @@
         </div>
       </div>
       <div>
-        <p class="text-blue-700 text-3xl w-full text-center">篩選區塊</p>
-        <div class="w-full flex justify-start items-center mt-10" :class="dataStore.command === 'comments' ? '':'hidden'">
-          <p>截止時間：</p>
-          <datepicker @update:modelValue="onChangeDate" inputFormat="yyyy-MM-dd" class="pl-2 border inline-block" v-model="filterState.endDate" />
-          <datepicker @update:modelValue="onChangeTime" inputFormat="HH:mm" minimumView="time" startingView="time" class="pl-2 border inline-block" v-model="filterState.endTime" />
+        <div class="w-full flex justify-start items-center mt-10 mobile:my-4" :class="dataStore.command === 'comments' ? '':'hidden'">
+          <p class="whitespace-nowrap flex-shrink-0">截止時間：</p>
+          <datepicker @update:modelValue="onChangeDate" inputFormat="yyyy-MM-dd" class="pl-2 border inline-block mobile:w-32 shrink" v-model="filterState.endDate" />
+          <datepicker @update:modelValue="onChangeTime" inputFormat="HH:mm" minimumView="time" startingView="time" class="pl-2 border inline-block mobile:w-32 shrink" v-model="filterState.endTime" />
         </div>
       </div>
       <div class="text-center">

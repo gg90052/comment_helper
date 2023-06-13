@@ -1,14 +1,14 @@
 <template>
-  <div class="flex-grow max-w-lg text-left">
+  <div class="flex-grow flex-shrink-0 max-w-lg text-left mobile:text-center mobile:max-w-full mobile:w-full">
     <div class="source">
       <div class="mt-4">
-        <input :value="post.id" type="text" disabled class="w-full rounded-none input-sm input-bordered max-w-xs disabled:bg-gray-300" placeholder="請按下方按鈕選擇貼文"/>
-        <button class="btn btn-blue btn-sm" @click="copy">複製</button>
-        <button class="btn btn-sm mt-4" :class="post.id === '' ? 'btn-blue':'btn-outline'" @click="fbInit">從粉絲專頁/社團選擇貼文</button>
-        <a class="btn btn-sm border-none block w-48 mt-4 bg-red-600 text-white" target="_blank" href="https://www.youtube.com/channel/UCNLxbtdTe-fFl8uDUS6tMcw?sub_confirmation=1">訂閱我的 Youtube 頻道</a>
+        <input :value="post.id" type="text" disabled class="w-full rounded-none input-sm input-bordered max-w-xs disabled:bg-gray-300 mobile:hidden" placeholder="請按下方按鈕選擇貼文"/>
+        <button class="btn btn-blue btn-sm mobile:hidden" @click="copy">複製</button>
+        <button class="btn btn-sm mt-4 mobile:mt-0 mobile:block mobile:mx-auto" :class="post.id === '' ? 'btn-blue':'btn-outline'" @click="fbInit">從粉絲專頁/社團選擇貼文</button>
+        <a class="btn btn-sm border-none block w-48 mt-4 bg-red-600 text-white mobile:mx-auto" target="_blank" href="https://www.youtube.com/channel/UCNLxbtdTe-fFl8uDUS6tMcw?sub_confirmation=1">訂閱我的 Youtube 頻道</a>
       </div>
     </div>
-    <div class="mt-4 flex flex-nowrap items-end" v-if="post.id !== ''">
+    <div class="mt-4 flex flex-nowrap items-end mobile:justify-center" v-if="post.id !== ''">
       <button class="bg-blue-500 hover:bg-blue-400 transition-colors px-3 py-1 text-white font-bold rounded-md btn-free-height mr-2" @click="getData('comments')">
         <svg class="svg-icon fill-current w-10 mx-2" viewBox="0 0 20 20">
 					<path d="M14.999,8.543c0,0.229-0.188,0.417-0.416,0.417H5.417C5.187,8.959,5,8.772,5,8.543s0.188-0.417,0.417-0.417h9.167C14.812,8.126,14.999,8.314,14.999,8.543 M12.037,10.213H5.417C5.187,10.213,5,10.4,5,10.63c0,0.229,0.188,0.416,0.417,0.416h6.621c0.229,0,0.416-0.188,0.416-0.416C12.453,10.4,12.266,10.213,12.037,10.213 M14.583,6.046H5.417C5.187,6.046,5,6.233,5,6.463c0,0.229,0.188,0.417,0.417,0.417h9.167c0.229,0,0.416-0.188,0.416-0.417C14.999,6.233,14.812,6.046,14.583,6.046 M17.916,3.542v10c0,0.229-0.188,0.417-0.417,0.417H9.373l-2.829,2.796c-0.117,0.116-0.71,0.297-0.71-0.296v-2.5H2.5c-0.229,0-0.417-0.188-0.417-0.417v-10c0-0.229,0.188-0.417,0.417-0.417h15C17.729,3.126,17.916,3.313,17.916,3.542 M17.083,3.959H2.917v9.167H6.25c0.229,0,0.417,0.187,0.417,0.416v1.919l2.242-2.215c0.079-0.077,0.184-0.12,0.294-0.12h7.881V3.959z"></path>
@@ -21,13 +21,13 @@
         </svg>
         抓按讚
       </button>
-      <button class="bg-blue-500 hover:bg-blue-400 transition-colors px-3 py-1 text-white font-bold rounded-md btn-free-height mr-2" @click="getData('shares')">
+      <button class="bg-blue-500 hover:bg-blue-400 transition-colors px-3 py-1 text-white font-bold rounded-md btn-free-height mr-2 mobile:hidden" @click="getData('shares')">
         <svg class="svg-icon fill-current w-10 mx-2" viewBox="0 0 20 20">
           <path d="M14.68,12.621c-0.9,0-1.702,0.43-2.216,1.09l-4.549-2.637c0.284-0.691,0.284-1.457,0-2.146l4.549-2.638c0.514,0.661,1.315,1.09,2.216,1.09c1.549,0,2.809-1.26,2.809-2.808c0-1.548-1.26-2.809-2.809-2.809c-1.548,0-2.808,1.26-2.808,2.809c0,0.38,0.076,0.741,0.214,1.073l-4.55,2.638c-0.515-0.661-1.316-1.09-2.217-1.09c-1.548,0-2.808,1.26-2.808,2.809s1.26,2.808,2.808,2.808c0.9,0,1.702-0.43,2.217-1.09l4.55,2.637c-0.138,0.332-0.214,0.693-0.214,1.074c0,1.549,1.26,2.809,2.808,2.809c1.549,0,2.809-1.26,2.809-2.809S16.229,12.621,14.68,12.621M14.68,2.512c1.136,0,2.06,0.923,2.06,2.06S15.815,6.63,14.68,6.63s-2.059-0.923-2.059-2.059S13.544,2.512,14.68,2.512M5.319,12.061c-1.136,0-2.06-0.924-2.06-2.06s0.923-2.059,2.06-2.059c1.135,0,2.06,0.923,2.06,2.059S6.454,12.061,5.319,12.061M14.68,17.488c-1.136,0-2.059-0.922-2.059-2.059s0.923-2.061,2.059-2.061s2.06,0.924,2.06,2.061S15.815,17.488,14.68,17.488"></path>
         </svg>
         顯示分享
       </button>
-      <div class="text-center">
+      <div class="text-center mobile:hidden">
         <button @click="importShare" class="bg-blue-500 hover:bg-blue-400 transition-colors px-3 py-1 text-white rounded-md font-bold btn-sm block">導入資料</button>
         <a href="https://www.facebook.com/commenthelper/posts/4583917594974372" target="_blank" class="text-blue-400 text-sm">如何抓分享</a>
       </div>

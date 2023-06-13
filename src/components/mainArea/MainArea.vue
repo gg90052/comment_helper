@@ -1,8 +1,10 @@
 <template>
-  <div class="flex flex-nowrap items-start py-4 px-3 mb-2 bg-white">
-    <Ci></Ci>
-    <InputArea ref="inputArea" @fbLogged="fbCallback" @showLoading="loadingDisplay" class="ml-8"></InputArea>
-    <YtVideo ref="ytRef" />
+  <div class="flex flex-nowrap items-start py-4 px-3 mb-2 bg-white mobile:flex-wrap">
+    <Ci class="mobile:w-full"></Ci>
+    <InputArea ref="inputArea" @fbLogged="fbCallback" @showLoading="loadingDisplay" class="ml-8 mobile:ml-0"></InputArea>
+    <div class="w-full max-w-[560px] mobile:mt-4 mobile:mx-auto">
+      <YtVideo ref="ytRef" />
+    </div>
     <PostPreview ref="postPreview" />
     <LoadingModal :show="showLoading"></LoadingModal>
     <PageSelector :show="showPageSelector" :accessToken="accessToken" @select="selectPost" @close="showPageSelector = false"></PageSelector>

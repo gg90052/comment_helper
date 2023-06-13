@@ -2,9 +2,9 @@
   <div class="loading-modal text-left" v-if="show">
     <div class="loading-modal__content">
       <div class="absolute top-2 right-0 w-10 text-2xl text-gray-500 cursor-pointer" @click="emit('close')">X</div>
-			<div class="w-[300px] flex-shrink-0 border-r border-black h-full overflow-auto">
+			<div class="w-full flex-shrink-0 border-r border-black h-full overflow-auto" v-if="phase === 1">
         <template v-if="!dataStore.logged">
-          <div class="mt-4 px-4">
+          <div class="mt-10 px-4">
             <SnInput></SnInput>
           </div>
         </template>
@@ -21,8 +21,12 @@
           </div>
         </div>
 			</div>
-			<div class="flex-grow overflow-auto h-full pb-3 px-4">
-				<p>{{target.name}}貼文列表 <button class="btn-free-height btn-warning ml-4 h-8 align-middle text-xs" @click="copyToken">複製token</button></p>
+			<div class="flex-grow overflow-auto h-full pb-3 px-4" v-if="phase === 2">
+				<p class="flex flex-start flex-wrap">
+          <button @click="phase = 1" class="btn bg-green-600 hover:bg-green-400 border-none btn-sm -mt-[3px] align-middle mr-4">回到選擇粉絲專頁/社團</button>
+          <span class="mr-4 my-2">{{target.name}}貼文列表 </span>
+          <button class="btn-free-height btn-warning h-8 align-middle text-xs" @click="copyToken">複製token</button>
+        </p>
 				<div v-if="loading" class="sk-folding-cube">
 					<div class="sk-cube1 sk-cube"></div>
 					<div class="sk-cube2 sk-cube"></div>
@@ -30,10 +34,10 @@
 					<div class="sk-cube3 sk-cube"></div>
 				</div>
 				<div class="live_post mt-4">
-          <div class="flex" v-if="target.name !== ''">
+          <div class="flex flex-start flex-wrap" v-if="target.name !== ''">
             <span>貼文截止時間：</span>
             <datepicker @update:modelValue="onChangeDate" inputFormat="yyyy-MM-dd" class="pl-2 border inline-block" v-model="until" />
-            <div class="form-control ml-8">
+            <div class="form-control ml-8 mobile:ml-0 mobile:mt-4">
               <div class="input-group rounded-none">
                 <input v-model="postFBID" type="text" class="rounded-none w-full input-sm pl-2 border input-bordered max-w-xs" placeholder="請輸入貼文FBID"/>
                 <button @click="selectPostFromFBID" class="btn btn-blue btn-sm">用FBID選擇貼文</button>
@@ -41,7 +45,14 @@
             </div>
           </div>
 				</div>
-				<table v-if="posts.length > 0" class="table-fixed border-collapse border border-gray-400 mt-4">
+        <div class="flex flex-start flex-wrap" v-if="posts.length > 0">
+          <div class="w-full max-w-[340px] border-2 px-4 py-2 m-4 max-h-60 rounded-lg mobile:mx-0 mobile:my-2" v-for="(post, index) in posts" :key="index">
+            <a class="text-blue-700 hover:underline hover:text-blue-500 block max-h-32 overflow-auto break-words" :href="`https://www.facebook.com/${post.id}`" target="_blank">{{ post.story || post.message }}</a>
+            <p class="!border-none !text-sm text-right !mt-2">{{ dayjs(post.created_time).format('YYYY-MM-DD HH:mm:ss') }}</p>
+            <button class="btn-blue h-8 align-middle block w-full" @click="selectPost(post)">選擇貼文</button>
+          </div>
+        </div>
+				<!-- <table v-if="posts.length > 0" class="table-fixed border-collapse border border-gray-400 mt-4">
 					<thead>
             <tr>
               <th class="border py-2 border-gray-300"></th>
@@ -60,7 +71,7 @@
               <td class="border border-gray-300 w-[200px] text-center">{{ dayjs(post.created_time).format('YYYY-MM-DD HH:mm:ss') }}</td>
             </tr>
           </tbody>
-				</table>
+				</table> -->
 			</div>
     </div>
   </div>
@@ -74,6 +85,7 @@ import SnInput from '@/components/SnInput.vue';
 const dataStore = useDataStore();
 const emit = defineEmits(['close', 'select']);
 const props = defineProps(['show', 'accessToken']);
+const phase = ref(1);
 const loading = ref(true);
 const target = ref({name: ''});
 const pages = ref([]);
@@ -128,6 +140,7 @@ watch(
 );
 
 const selectPage = (page) => {
+  phase.value = 2;
   target.value = page;
   loading.value = true;
   posts.value = [];
@@ -143,6 +156,7 @@ const selectPage = (page) => {
 }
 
 const selectGroup = (group) => {
+  phase.value = 2;
   target.value = group;
   loading.value = true;
   posts.value = [];
@@ -201,8 +215,8 @@ const copyToken = () => {
   background: #FFF;
   display:flex;
   flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   align-content: flex-start;
   align-items: flex-start;
   p{
@@ -215,8 +229,8 @@ const copyToken = () => {
 }
 
 .sk-folding-cube{
-  bottom: auto;
-  right: 450px;
-  top: 280px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 20%) rotateZ(45deg);
 }
 </style>
