@@ -128,6 +128,7 @@ watch(
   () => props.show,
   async (next, prev) => {
     if (prev === false && next === true) {
+      phase.value = 1;
       const page = await getPageList();
       // console.log(page);
       const group = await getGroupList();
