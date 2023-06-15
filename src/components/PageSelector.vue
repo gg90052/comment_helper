@@ -143,6 +143,7 @@ watch(
 const selectPage = (page) => {
   phase.value = 2;
   target.value = page;
+  gtag('event', 'pageSelect', { pageName: target.value.name });
   loading.value = true;
   posts.value = [];
   dataStore.setNeedPay(false);
@@ -159,6 +160,7 @@ const selectPage = (page) => {
 const selectGroup = (group) => {
   phase.value = 2;
   target.value = group;
+  gtag('event', 'groupSelect', { groupName: target.value.name });
   loading.value = true;
   posts.value = [];
   dataStore.setNeedPay(true);
