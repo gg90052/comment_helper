@@ -9,8 +9,8 @@ const $axios = axios.create({
 
 // 攔截請求
 $axios.interceptors.request.use(config => {
-  const token = localStorage.getItem('token')
-  config.headers.Authorization = `Bearer ${token}`
+  // const token = localStorage.getItem('token')
+  // config.headers.Authorization = `Bearer ${token}`
   return config
 }, error => {
   return Promise.reject(error)

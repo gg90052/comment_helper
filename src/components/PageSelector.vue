@@ -85,6 +85,7 @@ import SnInput from '@/components/SnInput.vue';
 const dataStore = useDataStore();
 const emit = defineEmits(['close', 'select']);
 const props = defineProps(['show', 'accessToken']);
+const showError = inject('globalModal') as (show, error) => void;
 const phase = ref(1);
 const loading = ref(true);
 const target = ref({name: ''});
@@ -169,8 +170,14 @@ const selectGroup = (group) => {
   const token = localStorage.testToken || props.accessToken;
   const groupID = localStorage.testTarget || group.id;
   FB.api(`${groupID}/feed?access_token=${token}&limit=15`, (res) => {
-    loading.value = false;
-    posts.value = res.data;
+    if (res.error){
+      showError(true, res.error);
+      phase.value = 1;
+      return;
+    }else{
+      loading.value = false;
+      posts.value = res.data;
+    }
   });
 }
 

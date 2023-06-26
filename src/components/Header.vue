@@ -7,10 +7,10 @@
 </template>
 <script lang="ts" setup>
 import { useDataStore } from '@/store/modules/data';
-const dataStore = useDataStore();
 const emit = defineEmits(['pageChange']);
 const change = (page) => {
-  dataStore.init();
+  const dataStore = useDataStore();
+  dataStore.$reset;
   emit('pageChange', page);
 }
 </script>

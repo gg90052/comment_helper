@@ -3,8 +3,8 @@
     <HeaderComponent @pageChange="pageChange" />
     <template v-if="pageStatus === 'home'">
       <MainArea />
-      <DonateArea v-show="dataStore.rawData.length === 0"/>
-      <FetchResults v-if="dataStore.rawData.length > 0" />
+      <DonateArea v-show="!hasData"/>
+      <FetchResults v-if="hasData" />
     </template>
     <template v-if="pageStatus === 'plus'">
       <Upload />
@@ -12,8 +12,9 @@
     </template>
     <template v-if="pageStatus === 'import'">
       <ImportUpload />
-      <ImportResult v-if="dataStore.rawData.length > 0" />
+      <ImportResult v-if="hasData" />
     </template>
+    <GlobalModal v-if="showModal" :data="modalData" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -26,12 +27,23 @@ import Upload from '@/components/plus/Upload.vue';
 import CompareResult from '@/components/plus/CompareResult.vue';
 import ImportUpload from '@/components/import/ImportUpload.vue';
 import ImportResult from '@/components/import/ImportResult.vue';
+import GlobalModal from '@/components/GlobalModal.vue';
 import { useDataStore } from '@/store/modules/data';
 const dataStore = useDataStore();
 const pageStatus = ref('home');
+const showModal = ref(false);
+const modalData = ref({});
+const hasData = computed(()=>{
+  return dataStore.rawData.length > 0;
+});
 const pageChange = (page) => {
   pageStatus.value = page;
 }
+const globalModalShow = (show: boolean, data) => {
+  modalData.value = data;
+  showModal.value = show;
+}
+provide('globalModal', globalModalShow);
 </script>
 <style scoped lang="scss">
 
