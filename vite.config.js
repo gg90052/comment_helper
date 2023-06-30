@@ -15,13 +15,15 @@ export default defineConfig({
   },
   server: {
     https: true,
+    port: 3000,
   },
   plugins: [
     vue(),
     htmlTemplate(),
     EnvironmentPlugin("all", { prefix: "VUE_APP_" }),
     VitePluginHtmlEnv({
-      envPrefixes: 'VUE_APP_'
+      envPrefixes: 'VUE_APP_', // default: VITE_
+      compiler: true,
     }),
     AutoImport({
       imports: ["vue", "vue-router"],
