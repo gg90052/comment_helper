@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 const showVideo = ref(true);
-const VIDEO_ID = 'rOHq4AEFkNY';
+const VIDEO_ID = 'WMAIlXVg6jg';
 const videoURL = ref('https://www.youtube.com/embed/' + VIDEO_ID);
 
 
