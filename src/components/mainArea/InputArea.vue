@@ -5,7 +5,7 @@
         <input :value="post.id" type="text" disabled class="w-full rounded-none input-sm input-bordered max-w-xs disabled:bg-gray-300 mobile:hidden" placeholder="請按下方按鈕選擇貼文"/>
         <button class="btn btn-blue btn-sm mobile:hidden" @click="copy">複製</button>
         <button class="btn btn-sm mt-4 mobile:mt-0 mobile:block mobile:mx-auto" :class="post.id === '' ? 'btn-blue':'btn-outline'" @click="fbInit">從粉絲專頁/社團選擇貼文</button>
-        <a class="btn btn-sm border-none block w-48 mt-4 bg-red-600 text-white mobile:mx-auto" target="_blank" href="https://www.youtube.com/channel/UCNLxbtdTe-fFl8uDUS6tMcw?sub_confirmation=1">訂閱我的 Youtube 頻道</a>
+        <a class="btn btn-sm border-none block w-48 mt-4 bg-red-600 text-white mobile:mx-auto whitespace-nowrap" target="_blank" href="https://www.youtube.com/channel/UCNLxbtdTe-fFl8uDUS6tMcw?sub_confirmation=1">訂閱我的 Youtube 頻道</a>
       </div>
     </div>
     <div class="mt-4 flex flex-nowrap items-end mobile:justify-center" v-if="post.id !== ''">
