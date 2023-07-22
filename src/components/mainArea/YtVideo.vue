@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 const showVideo = ref(true);
-const VIDEO_ID = "7qbixcnJKog";
+const VIDEO_ID = process.env.VUE_APP_NEW_VIDEO;
 const videoURL = ref("https://www.youtube.com/embed/" + VIDEO_ID);
 
 const setVideoShow = (show: boolean) => {
