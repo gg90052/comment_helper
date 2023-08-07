@@ -7,7 +7,13 @@
             <label class="label">
               <span class="label-text">載入檔案</span>
             </label>
-            <input @change="uploadFile" ref="file" type="file" class="" accept=".json"/>
+            <input
+              @change="uploadFile"
+              ref="file"
+              type="file"
+              class=""
+              accept=".json"
+            />
           </div>
         </div>
       </div>
@@ -15,7 +21,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useDataStore } from '@/store/modules/data';
+import { useDataStore } from "@/store/modules/data";
 const dataStore = useDataStore();
 const file = ref();
 
@@ -28,9 +34,8 @@ const uploadFile = () => {
   fileReader.onload = (e: any) => {
     const result = JSON.parse(e.target.result);
     dataStore.setRawData(result.datas);
-    dataStore.setCommand('comments')
-  }
+    dataStore.setCommand("comments");
+  };
   fileReader.readAsText(files.item(0));
-}
-
+};
 </script>
