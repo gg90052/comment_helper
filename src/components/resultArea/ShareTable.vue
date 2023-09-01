@@ -1,5 +1,7 @@
 <template>
-  <table class="resultTable table table-auto whitespace-normal table-zebra w-full">
+  <table
+    class="resultTable table table-auto whitespace-normal table-zebra w-full"
+  >
     <!-- head -->
     <thead>
       <tr>
@@ -11,15 +13,16 @@
     <tbody>
       <tr v-for="(tr, index) in tableData">
         <th>{{ index + 1 }}</th>
-        <td>{{ dataStore.logged === false ? 'undefined' : tr.from.name }}</td>
-        <td class="w-3/5 whitespace-normal text-[#D68927] hover:underline"><a :href="tr.from.link" target="_blank">{{ tr.from.link }}</a></td>
+        <td>{{ isLogged === false ? "undefined" : tr.from.name }}</td>
+        <td class="w-3/5 whitespace-normal text-[#D68927] hover:underline">
+          <a :href="tr.from.link" target="_blank">{{ tr.from.link }}</a>
+        </td>
       </tr>
     </tbody>
   </table>
 </template>
 <script lang="ts" setup>
-import dayjs from 'dayjs';
-import { useDataStore } from '@/store/modules/data';
+import { useDataStore } from "@/store/modules/data";
 const dataStore = useDataStore();
 const props = defineProps({
   useCompare: {
@@ -28,15 +31,20 @@ const props = defineProps({
   },
   datas: {
     type: Array,
-    default: ()=>[],
-  }
+    default: () => [],
+  },
+  forceLogged: {
+    type: Boolean,
+    default: false,
+  },
 });
-const tableData = computed(()=>{
-  if (props.useCompare === true){
-    return dataStore.files.find(item=>item.id === dataStore.showFileTable)?.datas;
-  }else{
+const isLogged = computed(() => dataStore.logged || props.forceLogged);
+const tableData = computed(() => {
+  if (props.useCompare === true) {
+    return dataStore.files.find((item) => item.id === dataStore.showFileTable)
+      ?.datas;
+  } else {
     return props.datas.length > 0 ? props.datas : dataStore.filteredData;
   }
 });
 </script>
-

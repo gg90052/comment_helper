@@ -4,16 +4,16 @@
 
 <script lang="ts" setup>
 const appHeight = () => {
-    const doc = document.documentElement
-    doc.style.setProperty('--app-height', `${window.innerHeight}px`)
-}
-window.addEventListener('resize', appHeight)
-appHeight()
+  const doc = document.documentElement;
+  doc.style.setProperty("--app-height", `${window.innerHeight}px`);
+};
+window.addEventListener("resize", appHeight);
+appHeight();
 </script>
 
 <style lang="scss">
-@import '@/assets/icomoon.css';
-:root{
+@import "@/assets/icomoon.css";
+:root {
   --app-height: 100%;
   --blue: #3b5fb2;
   --lightblue: #44b1da;
@@ -25,5 +25,4 @@ appHeight()
   text-align: center;
   color: #2c3e50;
 }
-
 </style>

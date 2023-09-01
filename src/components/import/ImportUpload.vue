@@ -34,7 +34,11 @@ const uploadFile = () => {
   fileReader.onload = (e: any) => {
     const result = JSON.parse(e.target.result);
     dataStore.setRawData(result.datas);
-    dataStore.setCommand("comments");
+    if (result.datas[0].story !== undefined) {
+      dataStore.setCommand("shares");
+    } else {
+      dataStore.setCommand("comments");
+    }
   };
   fileReader.readAsText(files.item(0));
 };

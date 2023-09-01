@@ -9,29 +9,62 @@
     </div>
     <div class="tabs justify-between">
       <div>
-        <a class="tab tab-lg tab-lifted" @click="setActiveTab(0)" :class="activeTab === 0 ? 'tab-active':''">擷取內容</a> 
-        <a class="tab tab-lg tab-lifted" @click="setActiveTab(1)" :class="activeTab === 1 ? 'tab-active':''">得獎名單</a> 
-        <a class="tab tab-lg tab-lifted" @click="setActiveTab(2)" :class="activeTab === 2 ? 'tab-active':''">得獎名單(表格)</a> 
+        <a
+          class="tab tab-lg tab-lifted"
+          @click="setActiveTab(0)"
+          :class="activeTab === 0 ? 'tab-active' : ''"
+          >擷取內容</a
+        >
+        <a
+          class="tab tab-lg tab-lifted"
+          @click="setActiveTab(1)"
+          :class="activeTab === 1 ? 'tab-active' : ''"
+          >得獎名單</a
+        >
+        <a
+          class="tab tab-lg tab-lifted"
+          @click="setActiveTab(2)"
+          :class="activeTab === 2 ? 'tab-active' : ''"
+          >得獎名單(表格)</a
+        >
       </div>
       <div v-if="activeTab === 0" class="bg-white text-sm py-1 px-4">
         <div class="flex items-center">
           <div>
-            <p>共擷取{{dataStore.rawData.length}}筆資料</p>
-            <p>篩選出{{dataStore.filteredData.length}}筆資料</p>
+            <p>共擷取{{ dataStore.rawData.length }}筆資料</p>
+            <p>篩選出{{ dataStore.filteredData.length }}筆資料</p>
           </div>
-          <button @click="exportTable" class="btn btn-blue btn-sm ml-4">匯出篩選結果</button>
-          <button @click="copyTable" class="btn btn-blue btn-sm ml-4">複製表格內容</button>
+          <button @click="exportTable" class="btn btn-blue btn-sm ml-4">
+            匯出篩選結果
+          </button>
+          <button @click="copyTable" class="btn btn-blue btn-sm ml-4">
+            複製表格內容
+          </button>
         </div>
       </div>
       <div v-if="activeTab === 2" class="bg-white text-sm py-1 px-4">
         <div class="flex items-center">
-          <button @click="copyTable" class="btn btn-blue btn-sm ml-4">複製表格內容</button>
+          <button @click="copyTable" class="btn btn-blue btn-sm ml-4">
+            複製表格內容
+          </button>
         </div>
       </div>
     </div>
     <transition>
       <div v-if="activeTab === 0">
-        <CommentTable />
+        <CommentTable
+          v-if="
+            dataStore.rawData.length > 0 &&
+            dataStore.rawData[0].message !== undefined
+          "
+        />
+        <ShareTable
+          v-if="
+            dataStore.rawData.length > 0 &&
+            dataStore.rawData[0].story !== undefined
+          "
+          :forceLogged="true"
+        />
       </div>
     </transition>
     <transition>
@@ -41,69 +74,86 @@
     </transition>
     <transition>
       <div v-if="activeTab === 2">
-        <CommentTable :datas="dataStore.drawResult" :sort="false" />
+        <CommentTable
+          v-if="
+            dataStore.drawResult.length > 0 &&
+            dataStore.drawResult[0].message !== undefined
+          "
+          :datas="dataStore.drawResult"
+          :sort="false"
+        />
+        <ShareTable
+          v-if="
+            dataStore.drawResult.length > 0 &&
+            dataStore.drawResult[0].story !== undefined
+          "
+          :datas="dataStore.drawResult"
+          :forceLogged="true"
+        />
       </div>
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import FilterBox from '@/components/resultArea/FilterBox.vue';
-import DrawBox from '@/components/resultArea/DrawBox.vue';
-import PrizeBox from '@/components/resultArea/PrizeBox.vue';
-import CommentTable from '@/components/resultArea/CommentTable.vue';
-import DrawResult from '@/components/resultArea/DrawResult.vue';
-import { useDataStore } from '@/store/modules/data';
+import FilterBox from "@/components/resultArea/FilterBox.vue";
+import DrawBox from "@/components/resultArea/DrawBox.vue";
+import PrizeBox from "@/components/resultArea/PrizeBox.vue";
+import CommentTable from "@/components/resultArea/CommentTable.vue";
+import DrawResult from "@/components/resultArea/DrawResult.vue";
+import { useDataStore } from "@/store/modules/data";
+import ShareTable from "@/components/resultArea/ShareTable.vue";
 const dataStore = useDataStore();
 const activeTab = ref(0);
 const filterBoxRef = ref();
 
 const setActiveTab = (tab: number) => {
   activeTab.value = tab;
-  nextTick(()=>{
+  nextTick(() => {
     dataStore.setFilterChange(true);
-  })
-}
+  });
+};
 
 const exportTable = () => {
   const obj = {
     postData: dataStore.postData,
     type: dataStore.command,
     datas: dataStore.filteredData,
-  }
+  };
 
-  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(obj));
-  const fileName = dataStore.command + '-' + dataStore.postData.id + '.json';
+  let dataUri =
+    "data:application/json;charset=utf-8," +
+    encodeURIComponent(JSON.stringify(obj));
+  const fileName = dataStore.command + "-" + dataStore.postData.id + ".json";
 
-  let linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', fileName);
+  let linkElement = document.createElement("a");
+  linkElement.setAttribute("href", dataUri);
+  linkElement.setAttribute("download", fileName);
   linkElement.click();
-}
+};
 
 const copyTable = async () => {
   const range = document.createRange();
   const selection = window.getSelection();
-  const resultTable = document.querySelector('.resultTable');
-  if (resultTable){
+  const resultTable = document.querySelector(".resultTable");
+  if (resultTable) {
     selection?.removeAllRanges();
-    try{
+    try {
       range.selectNodeContents(resultTable);
       selection?.addRange(range);
-    }catch{
+    } catch {
       range.selectNode(resultTable);
       selection?.addRange(range);
     }
-    
+
     try {
       await navigator.clipboard.writeText(selection);
-      alert('已複製到剪貼簿');
-    }
-    catch{
-      alert('複製失敗，請手動複製');
+      alert("已複製到剪貼簿");
+    } catch {
+      alert("複製失敗，請手動複製");
     }
   }
-}
+};
 
 onMounted(() => {
   // console.log(dataStore.rawData);
@@ -111,12 +161,11 @@ onMounted(() => {
   // console.log(dataStore.postData);
   activeTab.value = 0;
 });
-
 </script>
 <style lang="scss">
 .slideup-enter-active,
 .slideup-leave-active {
-  transition: all .3s;
+  transition: all 0.3s;
 }
 .slideup-enter-from,
 .slideup-leave-to {
@@ -130,5 +179,4 @@ onMounted(() => {
   max-height: 500px;
   opacity: 1;
 }
-
 </style>
