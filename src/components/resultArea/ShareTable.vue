@@ -12,10 +12,14 @@
     </thead>
     <tbody>
       <tr v-for="(tr, index) in tableData">
-        <th>{{ index + 1 }}</th>
-        <td>{{ isLogged === false ? "undefined" : tr.from.name }}</td>
+        <td>{{ index + 1 }}</td>
+        <td>
+          <a :href="isLogged ? tr.from.link : '#'" target="_blank">{{
+            isLogged ? tr.from.name : "undefined"
+          }}</a>
+        </td>
         <td class="w-3/5 whitespace-normal text-[#D68927] hover:underline">
-          <a :href="tr.from.link" target="_blank">{{ tr.from.link }}</a>
+          <a :href="tr.link" target="_blank">{{ tr.link }}</a>
         </td>
       </tr>
     </tbody>
@@ -23,6 +27,7 @@
 </template>
 <script lang="ts" setup>
 import { useDataStore } from "@/store/modules/data";
+
 const dataStore = useDataStore();
 const props = defineProps({
   useCompare: {
@@ -39,6 +44,7 @@ const props = defineProps({
   },
 });
 const isLogged = computed(() => dataStore.logged || props.forceLogged);
+// const isLogged = true;
 const tableData = computed(() => {
   if (props.useCompare === true) {
     return dataStore.files.find((item) => item.id === dataStore.showFileTable)
