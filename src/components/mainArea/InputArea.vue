@@ -55,7 +55,7 @@
         </svg>
         抓按讚
       </button>
-      <button
+      <!-- <button
         :class="isMobile() ? 'hidden' : ''"
         class="bg-blue-500 hover:bg-blue-400 transition-colors px-3 py-1 text-white font-bold rounded-md btn-free-height mr-2"
         @click="getData('shares')"
@@ -66,7 +66,7 @@
           ></path>
         </svg>
         顯示分享
-      </button>
+      </button> -->
       <div class="text-center">
         <button
           @click="importShare"
@@ -76,7 +76,7 @@
           導入資料
         </button>
         <a
-          href="https://www.facebook.com/commenthelper/posts/4583917594974372"
+          href="https://www.facebook.com/commenthelper/posts/pfbid02oSyRNGea2PA7rLPThHRE8BHjXDXBFoeu7D2a92j68buLEC2u63Xex3GypMkqtoXql"
           target="_blank"
           class="text-blue-400 text-sm"
           >如何抓分享</a
