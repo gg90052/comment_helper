@@ -1,5 +1,6 @@
 <template>
   <div class="bg-white p-4 grid grid-cols-4 gap-2">
+    <p class="col-span-4 text-xl text-cyan-600">本名單由「Facebook 粉絲團留言抽籤小助手」產出</p>
     <template v-for="(card, index) in dataStore.drawResult" :key="card.id">
       <div v-if="showPrizeTitle(index) && dataStore.prizeList.length > 0" class="col-span-4 text-white bg-blue-500 block py-2">{{ showPrizeTitle(index).title }}：<span class="text-yellow-300 font-bold mx-2">{{showPrizeTitle(index).num}}</span>名</div>
       <div class="card w-full bg-base-100 border shadow-xl text-left">
