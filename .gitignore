@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 *.lock
+/dist/css/*
+/dist/js/*
 
 
 # local env files

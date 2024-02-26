@@ -5,7 +5,8 @@
         v-model="sn"
         type="text"
         class="rounded-none w-full input-sm pl-2 border input-bordered max-w-xs"
-        placeholder="請輸入序號"
+        :placeholder="props.text !== '' ? props.text : '請輸入序號'"
+        :disabled="props.text !== '' ? true : false"
       />
       <button @click="signUp" :disabled="ajaxing" class="btn btn-blue btn-sm">
         {{ ajaxing ? "檢查序號中..." : "授權" }}
@@ -16,11 +17,17 @@
 <script lang="ts" setup>
 import { useDataStore } from "@/store/modules/data";
 const dataStore = useDataStore();
+const props = defineProps({
+  text: {
+    type: String,
+    default: "",
+  },
+});
 const sn = ref("");
 const ajaxing = ref(false);
 const signUp = async () => {
   ajaxing.value = true;
-  console.log(dataStore.userFbName, dataStore.userFbId);
+  // console.log(dataStore.userFbName, dataStore.userFbId);
   if (dataStore.userFbId === "") {
     alert("無法確認身分，請先點擊上方「從粉絲專頁/社團選擇貼文」後再輸入序號");
     ajaxing.value = false;
