@@ -16,7 +16,7 @@
             <SnInput></SnInput>
           </div>
         </template>
-        <p>粉絲專頁</p>
+        <p>粉絲專頁 Fanpages</p>
         <div class="select_page">
           <div class="pl-4 py-3">
             <PageNameInput @selectPage="(page) => selectPage(page)" />
@@ -32,7 +32,7 @@
             </h3>
           </div>
         </div>
-        <p class="page_group">社團</p>
+        <p class="page_group">社團 Groups</p>
         <div class="select_group">
           <div
             class="cursor-pointer"
@@ -111,7 +111,7 @@
               class="btn-blue h-8 align-middle block w-full"
               @click="selectPost(post)"
             >
-              選擇貼文
+              選擇貼文 Select Post
             </button>
           </div>
         </div>
