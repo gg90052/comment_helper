@@ -1,24 +1,24 @@
-import { defineStore } from 'pinia';
-import { store } from '@/store';
+import { defineStore } from "pinia";
+import { store } from "@/store";
 
 export const useDataStore = defineStore({
-  id: 'app-user',
+  id: "app-user",
   state: () => ({
     rawData: [],
     filteredData: [],
     postData: {},
-    command: '',
+    command: "",
     drawResult: [],
     prizeList: [],
     showPrize: false,
     files: [],
     showFileTable: -1 as unknown as number,
-    logged: false,
-    userFbName: '',
-    userFbId: '',
+    payedUser: false,
+    userFbName: "",
+    userFbId: "",
     needPaid: false,
-    accessToken: '',
-    postType: '',
+    accessToken: "",
+    postType: "",
     compareAnd: true,
     filterChange: false,
   }),
@@ -28,23 +28,21 @@ export const useDataStore = defineStore({
       this.rawData = [];
       this.filteredData = [];
       this.postData = {};
-      this.command = '';
+      this.command = "";
       this.drawResult = [];
       this.prizeList = [];
       this.showPrize = false;
       this.files = [];
       this.showFileTable = -1;
-      this.logged = false;
-      this.userFbId = '';
-      this.userFbName = '';
-      this.needPaid = false,
-      this.accessToken = '',
-      this.postType = '';
+      this.payedUser = false;
+      this.userFbId = "";
+      this.userFbName = "";
+      (this.needPaid = false), (this.accessToken = ""), (this.postType = "");
     },
-    setPostData(data){
+    setPostData(data) {
       this.postData = data;
     },
-    setCommand(command){
+    setCommand(command) {
       this.command = command;
     },
     setRawData(data) {
@@ -73,8 +71,8 @@ export const useDataStore = defineStore({
       this.userFbId = data.id;
       this.userFbName = data.name;
     },
-    setLoginStatus(status) {
-      this.logged = status;
+    setIsPayedUser(status) {
+      this.payedUser = status;
     },
     setNeedPay(status) {
       this.needPaid = status;
@@ -90,7 +88,7 @@ export const useDataStore = defineStore({
     },
     setFilterChange(status) {
       this.filterChange = status;
-    }
+    },
   },
 });
 

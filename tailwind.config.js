@@ -1,30 +1,27 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{vue,js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        chBlue: '#3b5fb2',
-        chLightblue: '#44b1da',
+        chBlue: "#3b5fb2",
+        chLightblue: "#44b1da",
       },
     },
     screens: {
-      'mobile': {'max': '1279px'},
+      mobile: { max: "1279px" },
     },
   },
   daisyui: {
     themes: [
-      'light',
+      "light",
       {
         mytheme: {
-          primary: '#3b5fb2',
-          secondary: '#44b1da',
-        }
-      }
-    ]
+          primary: "#3b5fb2",
+          secondary: "#44b1da",
+        },
+      },
+    ],
   },
   plugins: [require("daisyui")],
-}
+};

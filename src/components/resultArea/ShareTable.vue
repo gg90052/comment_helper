@@ -43,7 +43,7 @@ const props = defineProps({
     default: false,
   },
 });
-const isLogged = computed(() => dataStore.logged || props.forceLogged);
+const isLogged = computed(() => dataStore.payedUser || props.forceLogged);
 // const isLogged = true;
 const tableData = computed(() => {
   if (props.useCompare === true) {

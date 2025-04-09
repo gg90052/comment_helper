@@ -6,14 +6,14 @@
       <div class="card w-full bg-base-100 border shadow-xl text-left">
         <div class="card-body relative">
           <h2 class="card-title whitespace-nowrap">
-            <div class="w-12 aspect-square overflow-hidden" v-if="dataStore.postType === 'page'">
+            <div class="w-12 aspect-square overflow-hidden rounded-full">
               <img :src="pictureUrl(card)" alt="" />
             </div>
             <a v-if="card.from?.link" :href="card.from.link" target="_blank" class="text-[#D68927] hover:underline">{{ card.from.name }}</a>
             <template v-else>{{ name(card) }}</template>
           </h2>
           <p>
-            <a v-if="card.message" class="text-[#D68927] hover:underline" :href="'https://www.facebook.com/' + card.id" target="_blank">{{ card.message ? card.message : card.id }}</a>
+            <a v-if="card.message" class="text-[#D68927] hover:underline" :href="messageLink(card)" target="_blank">{{ card.message ? card.message : card.id }}</a>
             <p v-else-if="card.story === ''"></p>
             <ReactionIcon :reaction="card.type" v-else />
           </p>
@@ -38,6 +38,14 @@ const name = (card) => {
     return card.id;
   }
 }
+const messageLink = (card) => {
+  if (card.hasFromDetail){
+    //社團抓留言
+    return card.link;
+  }else{
+    return 'https://www.facebook.com/' + card.id;
+  }
+}
 const titleArray = computed(()=>{
   const arr = [];
   let count = 0;
@@ -53,8 +61,14 @@ const showPrizeTitle = (index) => {
   return titleArray.value.find(item=>item.count === index);
 }
 const pictureUrl = (card) => {
-  const id = card.from ? card.from.id : card.id;
-  return `https://graph.facebook.com/${id}/picture?type=large&access_token=${dataStore.accessToken}`;
+  if (card.picture){
+    return card.picture.url;
+  }else{
+    const id = card.from ? card.from.id : card.id;
+    if (id === 'no_id') return '';
+    const token = sessionStorage.overwriteToken ? sessionStorage.overwriteToken : dataStore.accessToken;
+    return `https://graph.facebook.com/${id}/picture?type=large&access_token=${token}`;
+  }
 }
 
 </script>

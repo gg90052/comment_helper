@@ -3,30 +3,43 @@
     class="flex-grow flex-shrink-0 max-w-lg text-left mobile:text-center mobile:max-w-full mobile:w-full"
   >
     <div class="source">
-      <div class="mt-4">
-        <input
+      <div class="mt-4 flex flex-col">
+        <slot></slot>
+        <!-- <input
           :value="post.id"
           type="text"
           disabled
           class="w-full rounded-none input-sm input-bordered max-w-xs disabled:bg-gray-300 mobile:hidden"
-          placeholder="請按下方按鈕選擇貼文"
+          placeholder="請按下方 Continue with Facebook 選擇貼文"
         />
         <button class="btn btn-blue btn-sm mobile:hidden" @click="copy">
           複製
-        </button>
+        </button> -->
         <button
-          class="btn btn-sm mt-4 mobile:mt-0 mobile:block mobile:mx-auto"
+          class="fbloginbtn btn btn-sm mr-8 mobile:block mobile:mx-auto"
           :class="post.id === '' ? 'btn-blue' : 'btn-outline'"
           @click="fbInit"
         >
-          從粉絲專頁/社團選擇貼文 Select post from fanpage/group
+          <!-- 從粉絲專頁/社團選擇貼文 Select post from fanpage/group -->
         </button>
-        <a
-          class="btn btn-sm border-none block w-48 mt-4 bg-red-600 text-white mobile:mx-auto whitespace-nowrap"
-          target="_blank"
-          href="https://www.youtube.com/channel/UCNLxbtdTe-fFl8uDUS6tMcw?sub_confirmation=1"
-          >訂閱我的 Youtube 頻道</a
-        >
+        <input
+          type="hidden"
+          v-model="overwrite_token"
+          class="w-2/3 input-sm border"
+          placeholder="請輸入TOKEN"
+        />
+        <div>
+          <a
+            target="_blank"
+            class="text-pink-700 text-lg"
+            href="https://app-sorteos.com/en/apps/facebook-comment-picker
+"
+            >Rafflys by AppSorteos 網站</a
+          >
+          <p v-if="tokenUpdateTime">
+            Token更新時間：{{ formatTime(tokenUpdateTime) }}
+          </p>
+        </div>
       </div>
     </div>
     <div
@@ -91,60 +104,91 @@ import { getNextAPI } from "@/api/api";
 import { useDataStore } from "@/store/modules/data";
 // import shareData from './shareData.js';
 import { shareTestData } from "@/utils/testData";
+import dayjs from "dayjs";
 const dataStore = useDataStore();
 const emit = defineEmits(["fbLogged", "showLoading"]);
+
+onMounted(() => {
+  window.addEventListener("importShare", function (e: Event) {
+    const customEvent = e as any;
+    importShare(customEvent.detail.data);
+  });
+  window.addEventListener("importComment", function (e: Event) {
+    // console.log(e);
+    const customEvent = e as any;
+    importComment(customEvent.detail.data);
+  });
+  window.addEventListener("facebookTokensUpdated", (e: Event) => {
+    // console.log(e);
+    const customEvent = e as any;
+    tokenUpdateTime.value = customEvent.detail.timestamp;
+    localStorage.setItem("facebookTokens", JSON.stringify(customEvent.detail));
+  });
+  const facebookTokens = localStorage.getItem("facebookTokens");
+  if (facebookTokens) {
+    tokenUpdateTime.value = JSON.parse(facebookTokens).timestamp;
+  }
+});
+
 function openURL(url: string, target?: string) {
   window.open(url, target);
 }
+const fbResponse = ref(undefined);
+const tokenUpdateTime = ref(undefined);
 const post = ref({ id: "" });
 const page = ref({ access_token: "" });
+const overwrite_token = ref("");
 const fields = {
-  comments: ["like_count", "message_tags", "message", "from", "created_time"],
+  comments: [
+    "like_count",
+    "message_tags",
+    "message",
+    "from{id,name}",
+    "created_time",
+  ],
   reactions: ["type", "name"],
 };
 let rawData = [];
 
 function fbInit() {
+  if (fbResponse.value !== undefined) {
+    emit("fbLogged", fbResponse.value, true);
+    return;
+  }
   emit("showLoading");
+  // const scope = "pages_show_list, pages_read_engagement, pages_read_user_content, groups_access_member_info, business_management";
+  const scope =
+    "pages_show_list, pages_read_engagement, pages_read_user_content, business_management";
   FB.login(
     function (response: any) {
-      emit("fbLogged", response, "type");
+      fbResponse.value = response;
+      localStorage.setItem("lastLoggedUser", response.authResponse.userID);
+      emit("fbLogged", response);
     },
     {
       auth_type: "rerequest",
-      scope:
-        "pages_show_list, pages_read_engagement, pages_read_user_content, groups_access_member_info, business_management",
+      scope: scope,
       return_scopes: true,
     }
   );
 }
 
-const copy = () => {
-  if (post.value.id === "") {
-    return;
-  }
-  navigator.clipboard
-    .writeText(post.value.id)
-    .then(() => {
-      alert("已複製：" + post.value.id);
-    })
-    .catch((err) => {
-      alert("Something went wrong" + err);
-    });
-};
-
 const importShare = (shareData) => {
   // shareData = shareTestData;
   localStorage.sharedposts = JSON.stringify(shareData);
   alert("匯入完成");
+  dataStore.setCommand("shares");
   dataStore.setRawData(shareData);
   dataStore.setNeedPay(true);
   // dataStore.setNeedPay(false);
 };
-const importComment = (commentData) => {
+const importComment = (commentData, needPay = true) => {
   localStorage.commentPosts = JSON.stringify(commentData);
   alert("匯入完成");
+  dataStore.setCommand("import_comments");
   dataStore.setRawData(commentData);
+  // console.log(commentData);
+  dataStore.setNeedPay(needPay);
 };
 
 const getData = async (command: string) => {
@@ -156,20 +200,39 @@ const getData = async (command: string) => {
     window.open(`https://m.facebook.com/browse/shares?id=${fbid}`);
     emit("showLoading", false);
   } else {
+    const storedToken = localStorage.getItem("facebookTokens")
+      ? JSON.parse(localStorage.getItem("facebookTokens") || "")
+      : undefined;
+    if (storedToken) {
+      const pageName = page.value.name;
+      const overwriteToken = storedToken?.tokens.find(
+        (token) => token.name === pageName
+      )?.access_token;
+      overwrite_token.value = overwriteToken;
+    }
+
     FB.api(
       `/${post.value.id}/${command}`,
       {
         fields: fields[command].join(","),
         limit: 100,
         order: "chronological",
-        access_token: page.value.access_token,
+        access_token:
+          overwrite_token.value !== ""
+            ? overwrite_token.value
+            : page.value.access_token,
       },
       (res: any) => {
-        rawData = rawData.concat(res.data);
-        if (res.paging && res.paging.next) {
-          getNext(res.paging.next);
+        if (res.data) {
+          rawData = rawData.concat(res.data);
+          if (res.paging && res.paging.next) {
+            getNext(res.paging.next);
+          } else {
+            finishFetch();
+          }
         } else {
-          finishFetch();
+          alert(res.error.message);
+          emit("showLoading", false);
         }
       }
     );
@@ -205,16 +268,28 @@ const isMobile = () => {
   return /Mobi|Android|iPhone/i.test(navigator.userAgent);
 };
 
-onMounted(() => {
-  window.addEventListener("importShare", function (e) {
-    importShare(e.detail.data);
-  });
-  window.addEventListener("importComment", function (e) {
-    importComment(e.detail.data);
-  });
+watch(overwrite_token, (newVal) => {
+  if (newVal !== "") {
+    sessionStorage.overwriteToken = newVal;
+  }
 });
+
+// 將時間戳轉換為易讀格式
+function formatTime(timestamp: number | string) {
+  if (!timestamp) return "";
+  return dayjs(timestamp).format("YYYY年MM月DD日 HH:mm:ss");
+}
 
 defineExpose({
   getPost,
 });
 </script>
+<style scoped lang="scss">
+.fbloginbtn {
+  width: 350px;
+  height: 76px;
+  background: url("@/assets/login.jpg") center center no-repeat;
+  background-size: contain;
+  border: none;
+}
+</style>

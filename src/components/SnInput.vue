@@ -53,7 +53,7 @@ const signUp = async () => {
   const signResult = await signRequest.json();
   if (signResult.code == 1) {
     alert(signResult.message);
-    dataStore.setLoginStatus(true);
+    dataStore.setIsPayedUser(true);
   } else {
     alert(signResult.message + "\n" + JSON.stringify(body));
     ajaxing.value = false;
