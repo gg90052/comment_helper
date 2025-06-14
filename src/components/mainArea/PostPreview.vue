@@ -4,12 +4,12 @@
     target="_blank"
     :href="`https://www.facebook.com/${state.post.id}`"
   >
-    <div class="w-[350px] px-4 py-2 bg-gray-200">
+    <div class="w-[560px] h-[315px] px-4 py-2 bg-gray-200">
       <p class="text-xs mb-1">選擇貼文預覽</p>
-      <div class="w-full h-[180px] overflow-hidden flex justify-center">
+      <div class="w-full h-[220px] overflow-hidden flex justify-center">
         <img
           class="h-full"
-          :src="state.post.full_picture || 'https://placehold.co/350x280'"
+          :src="state.post.full_picture || 'https://placehold.co/560x315'"
           alt=""
         />
       </div>

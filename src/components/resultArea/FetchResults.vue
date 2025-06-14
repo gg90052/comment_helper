@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-x-auto min-h-[400px]">
+  <div class="overflow-x-auto min-h-[400px] mb-10">
     <div v-show="dataStore.payedUser === true || dataStore.needPaid === false">
       <FilterBox ref="filterBoxRef" />
       <DrawBox @afterDraw="activeTab = 1" />
@@ -72,7 +72,10 @@
     </div>
     <transition>
       <div v-if="activeTab === 0">
-        <CommentTable v-if="dataStore.rawData.length > 0" />
+        <CommentTable
+          v-if="dataStore.rawData.length > 0"
+          :sort="dataStore.needPaid ? false : true"
+        />
         <!-- <ReactionTable
           v-if="
             dataStore.rawData.length > 0 &&
@@ -174,12 +177,6 @@ const copyTable = async () => {
     }
   }
 };
-
-onMounted(() => {
-  // console.log(dataStore.rawData);
-  // console.log(dataStore.filteredData);
-  // console.log(dataStore.postData);
-});
 </script>
 <style lang="scss">
 .slideup-enter-active,

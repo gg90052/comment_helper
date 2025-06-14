@@ -25,7 +25,7 @@
     </InputArea>
     <div
       class="w-full max-w-[560px] mobile:mt-4 mobile:mx-auto"
-      v-if="!dataStore.postData.id"
+      v-if="!dataStore.postData.hasOwnProperty('id')"
     >
       <YtVideo ref="ytRef" />
     </div>
@@ -55,7 +55,6 @@ const showPageSelector = ref(false);
 const accessToken = ref("");
 const inputArea = ref();
 const postPreview = ref();
-const payChecked = ref(false);
 const ytRef = ref();
 const checkingVIP = ref(false);
 
@@ -140,4 +139,5 @@ const selectPost = (post: any, page: any) => {
     }
   );
 };
+declare const FB: any;
 </script>

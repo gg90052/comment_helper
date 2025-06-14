@@ -3,24 +3,20 @@
     class="flex-grow flex-shrink-0 max-w-lg text-left mobile:text-center mobile:max-w-full mobile:w-full"
   >
     <div class="source">
-      <div class="mt-4 flex flex-col">
+      <div class="mt-4 flex flex-col mr-8">
         <slot></slot>
-        <!-- <input
-          :value="post.id"
-          type="text"
-          disabled
-          class="w-full rounded-none input-sm input-bordered max-w-xs disabled:bg-gray-300 mobile:hidden"
-          placeholder="請按下方 Continue with Facebook 選擇貼文"
-        />
-        <button class="btn btn-blue btn-sm mobile:hidden" @click="copy">
-          複製
-        </button> -->
-        <button
+        <!-- <button
           class="fbloginbtn btn btn-sm mr-8 mobile:block mobile:mx-auto"
           :class="post.id === '' ? 'btn-blue' : 'btn-outline'"
           @click="fbInit"
         >
-          <!-- 從粉絲專頁/社團選擇貼文 Select post from fanpage/group -->
+        </button> -->
+        <button
+          class="py-2 font-bold my-2 rounded-lg mobile:block mobile:mx-auto btn-blue"
+          @click="fbInit"
+        >
+          <span class="text-xl">從粉絲專頁選擇貼文</span> <br />Select post from
+          fanpage
         </button>
         <input
           type="hidden"
@@ -31,12 +27,12 @@
         <div>
           <a
             target="_blank"
-            class="text-pink-700 text-lg"
+            class="text-pink-700 text-sm"
             href="https://app-sorteos.com/en/apps/facebook-comment-picker
 "
             >Rafflys by AppSorteos 網站</a
           >
-          <p v-if="tokenUpdateTime">
+          <p class="text-sm" v-if="tokenUpdateTime">
             Token更新時間：{{ formatTime(tokenUpdateTime) }}
           </p>
         </div>
@@ -68,26 +64,7 @@
         </svg>
         抓按讚<br />Get reactions
       </button>
-      <!-- <button
-        :class="isMobile() ? 'hidden' : ''"
-        class="bg-blue-500 hover:bg-blue-400 transition-colors px-3 py-1 text-white font-bold rounded-md btn-free-height mr-2"
-        @click="getData('shares')"
-      >
-        <svg class="svg-icon fill-current w-10 mx-2" viewBox="0 0 20 20">
-          <path
-            d="M14.68,12.621c-0.9,0-1.702,0.43-2.216,1.09l-4.549-2.637c0.284-0.691,0.284-1.457,0-2.146l4.549-2.638c0.514,0.661,1.315,1.09,2.216,1.09c1.549,0,2.809-1.26,2.809-2.808c0-1.548-1.26-2.809-2.809-2.809c-1.548,0-2.808,1.26-2.808,2.809c0,0.38,0.076,0.741,0.214,1.073l-4.55,2.638c-0.515-0.661-1.316-1.09-2.217-1.09c-1.548,0-2.808,1.26-2.808,2.809s1.26,2.808,2.808,2.808c0.9,0,1.702-0.43,2.217-1.09l4.55,2.637c-0.138,0.332-0.214,0.693-0.214,1.074c0,1.549,1.26,2.809,2.808,2.809c1.549,0,2.809-1.26,2.809-2.809S16.229,12.621,14.68,12.621M14.68,2.512c1.136,0,2.06,0.923,2.06,2.06S15.815,6.63,14.68,6.63s-2.059-0.923-2.059-2.059S13.544,2.512,14.68,2.512M5.319,12.061c-1.136,0-2.06-0.924-2.06-2.06s0.923-2.059,2.06-2.059c1.135,0,2.06,0.923,2.06,2.059S6.454,12.061,5.319,12.061M14.68,17.488c-1.136,0-2.059-0.922-2.059-2.059s0.923-2.061,2.059-2.061s2.06,0.924,2.06,2.061S15.815,17.488,14.68,17.488"
-          ></path>
-        </svg>
-        顯示分享
-      </button> -->
       <div class="text-center">
-        <button
-          @click="importShare"
-          :class="isMobile() ? 'hidden' : ''"
-          class="bg-blue-500 hover:bg-blue-400 transition-colors px-3 py-1 text-white rounded-md font-bold btn-sm block"
-        >
-          導入資料
-        </button>
         <a
           href="https://www.facebook.com/commenthelper/posts/pfbid02oSyRNGea2PA7rLPThHRE8BHjXDXBFoeu7D2a92j68buLEC2u63Xex3GypMkqtoXql"
           target="_blank"
@@ -102,8 +79,6 @@
 <script setup lang="ts">
 import { getNextAPI } from "@/api/api";
 import { useDataStore } from "@/store/modules/data";
-// import shareData from './shareData.js';
-import { shareTestData } from "@/utils/testData";
 import dayjs from "dayjs";
 const dataStore = useDataStore();
 const emit = defineEmits(["fbLogged", "showLoading"]);
@@ -130,18 +105,16 @@ onMounted(() => {
   }
 });
 
-function openURL(url: string, target?: string) {
-  window.open(url, target);
-}
 const fbResponse = ref(undefined);
 const tokenUpdateTime = ref(undefined);
 const post = ref({ id: "" });
-const page = ref({ access_token: "" });
+const page = ref<{ access_token: string; name?: string }>({ access_token: "" });
 const overwrite_token = ref("");
 const fields = {
   comments: [
     "like_count",
     "message_tags",
+    "attachment",
     "message",
     "from{id,name}",
     "created_time",
@@ -184,6 +157,7 @@ const importShare = (shareData) => {
 };
 const importComment = (commentData, needPay = true) => {
   localStorage.commentPosts = JSON.stringify(commentData);
+  console.log(commentData);
   alert("匯入完成");
   dataStore.setCommand("import_comments");
   dataStore.setRawData(commentData);
@@ -195,48 +169,42 @@ const getData = async (command: string) => {
   emit("showLoading");
   rawData = [];
   dataStore.setCommand(command);
-  if (command === "shares") {
-    const fbid = post.value.id.split("_")[post.value.id.split("_").length - 1];
-    window.open(`https://m.facebook.com/browse/shares?id=${fbid}`);
-    emit("showLoading", false);
-  } else {
-    const storedToken = localStorage.getItem("facebookTokens")
-      ? JSON.parse(localStorage.getItem("facebookTokens") || "")
-      : undefined;
-    if (storedToken) {
-      const pageName = page.value.name;
-      const overwriteToken = storedToken?.tokens.find(
-        (token) => token.name === pageName
-      )?.access_token;
-      overwrite_token.value = overwriteToken;
-    }
-
-    FB.api(
-      `/${post.value.id}/${command}`,
-      {
-        fields: fields[command].join(","),
-        limit: 100,
-        order: "chronological",
-        access_token:
-          overwrite_token.value !== ""
-            ? overwrite_token.value
-            : page.value.access_token,
-      },
-      (res: any) => {
-        if (res.data) {
-          rawData = rawData.concat(res.data);
-          if (res.paging && res.paging.next) {
-            getNext(res.paging.next);
-          } else {
-            finishFetch();
-          }
-        } else {
-          alert(res.error.message);
-          emit("showLoading", false);
-        }
-      }
-    );
+  const storedToken = localStorage.getItem("facebookTokens")
+    ? JSON.parse(localStorage.getItem("facebookTokens") || "")
+    : undefined;
+  if (storedToken) {
+    const pageName = page.value.name;
+    const overwriteToken = storedToken?.tokens.find(
+      (token) => token.name === pageName
+    )?.access_token;
+    overwrite_token.value = overwriteToken;
   }
+
+  FB.api(
+    `/${post.value.id}/${command}`,
+    {
+      fields: fields[command].join(","),
+      limit: 100,
+      order: "chronological",
+      access_token:
+        overwrite_token.value !== ""
+          ? overwrite_token.value
+          : page.value.access_token,
+    },
+    (res: any) => {
+      if (res.data) {
+        rawData = rawData.concat(res.data);
+        if (res.paging && res.paging.next) {
+          getNext(res.paging.next);
+        } else {
+          finishFetch();
+        }
+      } else {
+        alert(res.error.message);
+        emit("showLoading", false);
+      }
+    }
+  );
 };
 
 const getNext = async (url) => {
@@ -283,6 +251,8 @@ function formatTime(timestamp: number | string) {
 defineExpose({
   getPost,
 });
+
+declare const FB: any;
 </script>
 <style scoped lang="scss">
 .fbloginbtn {

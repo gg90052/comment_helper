@@ -13,7 +13,9 @@
             <template v-else>{{ name(card) }}</template>
           </h2>
           <p>
-            <a v-if="card.message" class="text-[#D68927] hover:underline" :href="messageLink(card)" target="_blank">{{ card.message ? card.message : card.id }}</a>
+            <a v-if="card.message || card.attachment" class="text-[#D68927] hover:underline" :href="messageLink(card)" target="_blank">
+              <component :is="renderImage(card)" v-if="card.attachment?.media?.image?.src" />{{ card.message}}
+            </a>
             <p v-else-if="card.story === ''"></p>
             <ReactionIcon :reaction="card.type" v-else />
           </p>
@@ -24,6 +26,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { h } from 'vue';
 import dayjs from 'dayjs';
 import ReactionIcon from './ReactionIcon.vue';
 import { useDataStore } from '@/store/modules/data';
@@ -56,6 +59,20 @@ const titleArray = computed(()=>{
   });
   return arr;
 });
+
+const renderImage = (card) => {
+  if (card.attachment?.media?.image?.src) {
+    return h('img', {
+      src: card.attachment.media.image.src,
+      alt: 'attachment',
+      style: {
+        maxWidth: '100px',
+        height: 'auto'
+      }
+    });
+  }
+  return null;
+}
 
 const showPrizeTitle = (index) => {
   return titleArray.value.find(item=>item.count === index);

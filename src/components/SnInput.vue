@@ -25,38 +25,62 @@ const props = defineProps({
 });
 const sn = ref("");
 const ajaxing = ref(false);
+const FBLogin = () => {
+  FB.login(
+    function (response: any) {
+      dataStore.setUser({
+        id: response.authResponse.userID,
+        name: response.authResponse.userID,
+      });
+      signUp();
+    },
+    {
+      auth_type: "rerequest",
+      scope: "",
+      return_scopes: true,
+    }
+  );
+};
 const signUp = async () => {
   ajaxing.value = true;
   // console.log(dataStore.userFbName, dataStore.userFbId);
   if (dataStore.userFbId === "") {
-    alert("無法確認身分，請先點擊上方「從粉絲專頁/社團選擇貼文」後再輸入序號");
-    ajaxing.value = false;
+    alert("無法確認身分，請先完成授權");
+    FBLogin();
     return;
-  }
-  const body = {
-    token: sn.value === "" ? "-1" : sn.value,
-    username: dataStore.userFbName,
-    app_scope_id: dataStore.userFbId,
-  };
-  const signRequest = await fetch(
-    `https://script.google.com/macros/s/AKfycbzrtUqld8v4IQYjegA6XxmRTYZwLi5Hlkz0dhTBEBYdh5CAFQ8/exec`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        accept: "*/*",
-      },
-      mode: "cors",
-      body: new URLSearchParams(body).toString(),
-    }
-  );
-  const signResult = await signRequest.json();
-  if (signResult.code == 1) {
-    alert(signResult.message);
-    dataStore.setIsPayedUser(true);
   } else {
-    alert(signResult.message + "\n" + JSON.stringify(body));
-    ajaxing.value = false;
+    FB.api(`/me?fields=id,name`, async (res) => {
+      const user = {
+        id: res.id,
+        name: res.name,
+      };
+      dataStore.setUser(user);
+      const body = {
+        token: sn.value === "" ? "-1" : sn.value,
+        username: dataStore.userFbName,
+        app_scope_id: dataStore.userFbId,
+      };
+      const signRequest = await fetch(
+        `https://script.google.com/macros/s/AKfycbzrtUqld8v4IQYjegA6XxmRTYZwLi5Hlkz0dhTBEBYdh5CAFQ8/exec`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            accept: "*/*",
+          },
+          mode: "cors",
+          body: new URLSearchParams(body).toString(),
+        }
+      );
+      const signResult = await signRequest.json();
+      if (signResult.code == 1) {
+        alert(signResult.message);
+        dataStore.setIsPayedUser(true);
+      } else {
+        alert(signResult.message + "\n" + JSON.stringify(body));
+        ajaxing.value = false;
+      }
+    });
   }
 };
 </script>
